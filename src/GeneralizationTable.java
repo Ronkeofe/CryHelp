@@ -4,6 +4,8 @@ import java.util.*;
 
 public class GeneralizationTable {
     //public GeneralizationTable() {}
+    
+    public static int noOfSuppRec;
 
     public GeneralizationTable(int kAnon, QuasiID... list) {
         this();
@@ -61,7 +63,7 @@ public class GeneralizationTable {
 
     public String[] getAttributesToGeneralize(GeneralizationSteps solution) {
         ArrayList<String> output = new ArrayList<String>();
-
+           noOfSuppRec=0;
         if (!kTupleListIsEmpty && (this.kAnon > 1)) {
             // load output with ALL attributes and number of appearances of 
             // these attributes in the data.
@@ -94,6 +96,7 @@ public class GeneralizationTable {
                     //str.substring(2, str.length())
                    //stringListCrime.add(suppressedRecord.substring(5, 6));
                     System.out.println(" suppressedRecord is " + suppressedRecord);
+                    noOfSuppRec +=1;
                    // System.out.println("crime is " + stringListCrime);
                   //  System.out.println("age is " + stringList);
                   //  System.out.println("supp rec length is " + length_suppres);

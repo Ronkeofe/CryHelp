@@ -752,6 +752,7 @@ public class Phase3GUI extends JFrame {
     public static String[][] data;
     private static String[] expired_row;
     public static long[] arrival_time;
+    public static int kAnonSuppRec;
     public static long existence_time;
     long start_time;
     // public static int[] info_loss;

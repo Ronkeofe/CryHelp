@@ -28,6 +28,7 @@ public class LDiversity {
     static String sensitive_attribute = "`CRIME_TYPE`";
     static String quasi_attribute = "`RESIDENCE`";
     //static String[] query_result;
+    public static int GenStep = Phase3GUI.GenStep;
     static String[][] GeneralizedDataForAnonymization;
     static int EC_Length;  // EC_Length stores the total number of records in the buffer. 
     // i need EC_Length for function populateDatabase_EquivalenceClass
@@ -78,7 +79,7 @@ public class LDiversity {
 
     public static String[][] AnonymizedInfo() {
         // get a DBManager
-       
+
         DBManager dbManager = new DBManager();
 
         // create sql to get sensitive and quasi values
@@ -101,7 +102,7 @@ public class LDiversity {
             }
             System.out.println();
         }
-        
+
         GeneralizedDataForAnonymization = new String[result.length][3];
         startTime = System.currentTimeMillis();
         System.out.println("L div start time is  " + startTime);
@@ -207,7 +208,7 @@ public class LDiversity {
 
         String[] result = null;
         try {
-           /* startTime = System.currentTimeMillis();
+            /* startTime = System.currentTimeMillis();
             System.out.println("L div start time is  " + startTime);*/
             String sql_query = "SELECT COUNT(DISTINCT CRIME_TYPE), COUNT(ANONYMIZED_RESIDENCE),ANONYMIZED_RESIDENCE FROM EquivalenceClassTable GROUP BY ANONYMIZED_RESIDENCE";
 
@@ -241,7 +242,7 @@ public class LDiversity {
     }
 
     private static void confirmLDiversity(String[][] forLDiversity, int lValue, int kValue) {
-        
+
         int eqClassSatLDiv = 0;
         int eqClassSuppRecords = 0;
         int eqClassNotSatLDiv = 0;
@@ -266,19 +267,19 @@ public class LDiversity {
         lDivTime = endTime - startTime;
         System.out.println("L div Time is  " + lDivTime);
         String[][] lDivData = new String[eqClassSatLDiv][2]; //two dim array to keep anonymized residence against the count of anonymize res.
-        
-         int x =0;
-        
+
+        int x = 0;
+
         for (int m = 0; m < forLDiversity.length; m++) {
             int k = 0;
             int countOfCrimeType = Integer.parseInt(forLDiversity[m][k]);
             int equivalenceClassCount = Integer.parseInt(forLDiversity[m][++k]);
             if (countOfCrimeType >= lValue && equivalenceClassCount >= kValue) {
-               int y=0;
-               lDivData[x][y] = forLDiversity[m][2];
-               lDivData[x][++y] = forLDiversity[m][1];
-               x++;
-              
+                int y = 0;
+                lDivData[x][y] = forLDiversity[m][2];
+                lDivData[x][++y] = forLDiversity[m][1];
+                x++;
+
             }
         }
         int noOfEqClass = forLDiversity.length;
@@ -286,12 +287,12 @@ public class LDiversity {
         //call info_loss with lDivData
         InfoLoss infoLoss = new InfoLoss();
         infoLoss.infoLossForLDiv(lDivData);
-         int j = 0;
+        int j = 0;
         try {
             Workbook workbook = Workbook.getWorkbook(new File("/home/asakpere/Desktop/ldiversity.xls"));
             WritableWorkbook copy = Workbook.createWorkbook(new File("/home/asakpere/Desktop/ldiversity.xls"), workbook);
             WritableSheet sheet = copy.getSheet(0);
-           
+
             Number rround = new Number(j, Phase3GUI.round, Phase3GUI.round);
             sheet.addCell(rround);
             j++;
@@ -319,15 +320,24 @@ public class LDiversity {
             j++;
             Number bufferLife = new Number(j, Phase3GUI.round, Phase3GUI.existence_time);
             sheet.addCell(bufferLife);
-             copy.write();
+            copy.write();
             copy.close();
-            
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (eqClassNotSatLDiv > 0) {
+        
+        
+        //when you get the appropriate condition, change it in the if statement
+        System.out.print("Eq class Supp Rec is: "+ eqClassSuppRecords + " and K anon own is "+ GeneralizationTable.noOfSuppRec);
+        if (eqClassSuppRecords > GeneralizationTable.noOfSuppRec) {
+            
+            System.out.println("Entered here for to begin l div adv ");
+            GenStep = Phase3GUI.GenStep;
+            LDiversityAdvanced.AnonymizedInfo(++LDiversity.GenStep, 0);
 
+        } else {
+            System.out.println("Not Entered here for L div adv");
         }
 
     }
@@ -374,18 +384,6 @@ public class LDiversity {
             result[i] = t;
         }
         return result;
-    }
-
-    public static void print() {
-        hold_info temp;
-
-        // dbInfo = RetrieveDatabaseInfo();
-        //i may need this:  System.out.println("Gen Step is "  + GenStep);
-        //the main thing now is the conversion
-        for (int i = 0; i < 9; i++) {
-
-        }
-
     }
 
 //holds the values of our query result: residence and crime type     
