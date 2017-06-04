@@ -1,5 +1,9 @@
 
+
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import jxl.Workbook;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -26,6 +30,11 @@ public class TClosenessAdvanced {
     static long tClosenessAdvStartTime;
     static int totalNumberOfRecords;
     static int countCheckForTCloseness;
+    static String USER = "root";
+       static String MYSQL_URL = "jdbc:mysql://localhost/mysql";
+         static Connection connection;
+         static Statement statement = null;
+       
 
     static String[][] GeneralizedDataForAnonymization;
     static int EC_Length;
@@ -59,8 +68,15 @@ public class TClosenessAdvanced {
         GeneralizedDataForAnonymization = new String[result.length][3];
         if (begins == 0) {
             tClosenessAdvStartTime = System.currentTimeMillis();
+             try {
+            connection = DriverManager.getConnection(MYSQL_URL, USER, null);
+            statement = connection.createStatement();
+             System.out.println("T Closeness Adv start time is  " + tClosenessAdvStartTime);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        System.out.println("T Closeness Adv start time is  " + tClosenessAdvStartTime);
+        }
+       
 
         for (int i = 0; i < result.length; i++) // for (int i = 0; i <size; i++)
         //come to think of it, this stupid for loop method is being used because the waiting time has bee sorted
@@ -83,19 +99,81 @@ public class TClosenessAdvanced {
             }
 
         }
-
         //return result; 
-        System.out.println("length of buffer for tcloseness   " + query_result.length);
-        totalNumberOfRecords = query_result.length;
-        prepareForTCloseness(dbManager, query_result.length);
+        
+        populateDatabase_EquivalenceClass();
 
     }
 
-    public static String[][] t_closeness(int kAnon, float tvalue) {
-        for (int i = 0; i < 9; i++) {
+//    public static String[][] t_closeness(int kAnon, float tvalue) {
+//        for (int i = 0; i < 9; i++) {
+//
+//        }
+//        return null;
+//    }
+    
+    public static void populateDatabase_EquivalenceClass() //public static void populateDatabase_EquivalenceClass( Statement statement, String filename )
+    {
 
+       
+        DBManager dbManager = new DBManager();
+        dbManager.clearTable2Data();
+       
+
+       
+        // DatabaseCreator.createEquivalenceClassTable();
+        //DatabaseCreator.createTableAnonymization();
+        for (int i = 0; i < EC_Length; i++) { // for (int i = 0; i <size; i++)
+            //come to think of it, this stupid for loop method is being used because the waiting time has bee sorted
+
+            int j = 0;
+            // for(int j =0;j<3;j++)  //3 or result[i+1].length because i am considering 3 columns
+            // for(int j =0;j<result[i].length;j++)  //3 because i am considering 3 columns
+
+            // INSERT INTO createEquivalenceClassTable(RESIDENCE, CRIME_TYPE, ANONYMIZED_RESIDENCE) VALUES (GeneralizedDataForAnonymization[i][j], GeneralizedDataForAnonymization[i][j++], GeneralizedDataForAnonymization[i][j++]);
+            String first = GeneralizedDataForAnonymization[i][j];
+            String second = GeneralizedDataForAnonymization[i][++j];
+            String third = GeneralizedDataForAnonymization[i][++j];
+
+            try {
+                // create sql to get sensitive and quasi values
+                String sql_insert_stmt = "INSERT INTO Phase3.EquivalenceClassTable "
+                        + "VALUES ('" + first + "','" + second + "','" + third + "')";
+                //statement.runQuery(sql_insert_stmt );
+                if (statement != null) {
+                    statement.execute(sql_insert_stmt);
+                }
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+        
         }
-        return null;
+
+        String[] result = null;
+        try {
+
+//              Count(Distinct user_id) As countUsers
+//   , Count(site_id) As countVisits
+//   , site_id As site
+            String sql_query = "SELECT CRIME_TYPE FROM EquivalenceClassTable";
+
+            //String sql_query2 = "SELECT DISTINCT(COUNT(CRIME_TYPE)), ANONYMIZED_RESIDENCE FROM EquivalenceClassTable GROUP BY ANONYMIZED_RESIDENCE";
+            result = dbManager.runQuery(sql_query);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+//        for(int k =0;k<result.length;k++){
+//            System.out.println("Result "+result[k]);
+//        }
+System.out.println("length of buffer for tcloseness   " + result.length);
+        totalNumberOfRecords = result.length;
+        prepareForTCloseness(dbManager,result.length);
+
     }
 
     // select crime_type, anonymized_residence as anon_res, count(anonymized_residence), count(anonymized_residence)/(select count(anonymized_residence) from Phase3.EquivalenceClassTable where anonymized_residence = anon_res group by anonymized_residence) as EqClass_saDist from Phase3.EquivalenceClassTable group by crime_type, anonymized_residence;
@@ -222,7 +300,7 @@ public class TClosenessAdvanced {
             }
         }
 
-        double percentNotSat = (double) (notSatisfiedTCloseness / countCheckForTCloseness);
+        double percentNotSat =  (double)notSatisfiedTCloseness / countCheckForTCloseness;
 
         if (percentNotSat >= TCloseness.alphaValue) {
 

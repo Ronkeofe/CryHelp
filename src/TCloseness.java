@@ -216,19 +216,23 @@ public class TCloseness {
             sheet.addCell(bufferLife);
             copy.write();
             copy.close();
+             double percentNotSat = (double)notSatisfiedTCloseness/countCheckForTCloseness;
+                
+            if(percentNotSat >= alphaValue){
+                System.out.println("Entered here");
+                GenStep = Phase3GUI.GenStep;
+                TClosenessAdvanced.AnonymizedInfo(++GenStep,0);
+                    
+            }else{
+                System.out.println("Not Entered here");
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-          double percentNotSat = (double)(notSatisfiedTCloseness/countCheckForTCloseness);
-                
-            if(percentNotSat >= alphaValue){
-                
-                TClosenessAdvanced.AnonymizedInfo(++GenStep,0);
-                    
-            }
-
+         
     }
 
 }
