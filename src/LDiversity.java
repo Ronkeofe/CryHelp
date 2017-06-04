@@ -78,7 +78,7 @@ public class LDiversity {
 
     public static String[][] AnonymizedInfo() {
         // get a DBManager
-
+       
         DBManager dbManager = new DBManager();
 
         // create sql to get sensitive and quasi values
@@ -101,8 +101,10 @@ public class LDiversity {
             }
             System.out.println();
         }
-
+        
         GeneralizedDataForAnonymization = new String[result.length][3];
+        startTime = System.currentTimeMillis();
+        System.out.println("L div start time is  " + startTime);
 
         for (int i = 0; i < result.length; i++) // for (int i = 0; i <size; i++)
         //come to think of it, this stupid for loop method is being used because the waiting time has bee sorted
@@ -205,7 +207,8 @@ public class LDiversity {
 
         String[] result = null;
         try {
-            startTime = System.currentTimeMillis();
+           /* startTime = System.currentTimeMillis();
+            System.out.println("L div start time is  " + startTime);*/
             String sql_query = "SELECT COUNT(DISTINCT CRIME_TYPE), COUNT(ANONYMIZED_RESIDENCE),ANONYMIZED_RESIDENCE FROM EquivalenceClassTable GROUP BY ANONYMIZED_RESIDENCE";
 
             //String sql_query2 = "SELECT DISTINCT(COUNT(CRIME_TYPE)), ANONYMIZED_RESIDENCE FROM EquivalenceClassTable GROUP BY ANONYMIZED_RESIDENCE";
@@ -238,7 +241,7 @@ public class LDiversity {
     }
 
     private static void confirmLDiversity(String[][] forLDiversity, int lValue, int kValue) {
-
+        
         int eqClassSatLDiv = 0;
         int eqClassSuppRecords = 0;
         int eqClassNotSatLDiv = 0;
@@ -259,7 +262,9 @@ public class LDiversity {
             }
         }
         endTime = System.currentTimeMillis();
+        System.out.println("L div end time is  " + endTime);
         lDivTime = endTime - startTime;
+        System.out.println("L div Time is  " + lDivTime);
         String[][] lDivData = new String[eqClassSatLDiv][2]; //two dim array to keep anonymized residence against the count of anonymize res.
         
          int x =0;

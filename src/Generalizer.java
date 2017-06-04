@@ -22,7 +22,8 @@ public class Generalizer {
     // TODO: Since this is a property of PRODUCT_ID, it may be moved to the enum stuff
     static final String ID_MAX_GEN = "****";
     // static final String WEIGHT_MAX_GEN = "<0-" + QuasiID.RESIDENCE.maxValue + ">";
-    static final String PLACE_MAX_GEN = "****";
+   // static final String PLACE_MAX_GEN = "****";
+    static final String PLACE_MAX_GEN = "Universe";
     ///static final double WEIGHT_CLUSTER_FACTOR = 2.0;
     // static final double DEPT_ID_CLUSTER_FACTOR = WEIGHT_CLUSTER_FACTOR;
     static final double AGE_CLUSTER_FACTOR = 2.0;

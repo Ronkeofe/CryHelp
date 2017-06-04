@@ -13,8 +13,7 @@ import jxl.write.WritableWorkbook;
  *
  * @author asakpere
  */
-//import static LDiversity.lValue;
-public class TCloseness {
+public class TClosenessAdvanced {
 
     static String sensitive_attribute = "`CRIME_TYPE`";
     static String quasi_attribute = "`RESIDENCE`";
@@ -23,31 +22,80 @@ public class TCloseness {
     public static int notSatisfiedTCloseness = 0;
     static int countOfRecNotGoingTCloseness = 0;
     static long tClosenessTime = 0;
-    static long tClosenessEndTime;
-    static long tClosenessStartTime;
+    static long tClosenessAdvEndTime;
+    static long tClosenessAdvStartTime;
     static int totalNumberOfRecords;
     static int countCheckForTCloseness;
-    public static double alphaValue =0.7;
-    public static int GenStep = Phase3GUI.GenStep;
+
+    static String[][] GeneralizedDataForAnonymization;
+    static int EC_Length;
+
+    public static void AnonymizedInfo(int genStep, int begins) {
+        // get a DBManager
+
+        DBManager dbManager = new DBManager();
+
+        // create sql to get sensitive and quasi values
+        String sql = "SELECT " + quasi_attribute + " ," + sensitive_attribute
+                + "FROM Crime";
+        String[] query_result = dbManager.runQuery(sql);
+        int noOfColumns = 2;
+        String[][] result = new String[query_result.length / 2][noOfColumns]; // divided by 2 because the two columns are combined together
+        // EC_Length stores the total number of records in the buffer
+        EC_Length = result.length;
+
+        // output of sql is placed into a two-dimensional array that can now be manipulated for k-anonymity and l-diversity
+        int value = -1;
+        for (int i = 0; i < result.length; i++) {
+            System.out.print("content of query is ");
+            for (int j = 0; j < result[i].length; j++) {
+                value++;
+                result[i][j] = query_result[value];
+                System.out.print(result[i][j] + ", ");
+            }
+            System.out.println();
+        }
+
+        GeneralizedDataForAnonymization = new String[result.length][3];
+        if (begins == 0) {
+            tClosenessAdvStartTime = System.currentTimeMillis();
+        }
+        System.out.println("T Closeness Adv start time is  " + tClosenessAdvStartTime);
+
+        for (int i = 0; i < result.length; i++) // for (int i = 0; i <size; i++)
+        //come to think of it, this stupid for loop method is being used because the waiting time has bee sorted
+        {
+            for (int j = 0; j < 3; j++) //3 or result[i+1].length because i am considering 3 columns
+            // for(int j =0;j<result[i].length;j++)  //3 because i am considering 3 columns
+            {
+                if (j == 2) {  // 2 because i am considering the third column which is the generalized cell
+                    //if (j == 1) {  // 1 because i am considering the second column which is the generalized cell
+
+                    GeneralizedDataForAnonymization[i][j] = Generalizer.generalizeRESIDENCE(result[i][j - 2], genStep, QuasiID.RESIDENCE);
+                    // j- 1 because i need to find the generalized value of the immediate past cell
+                    // j- 2 because i need to find the generalized value of two immediate past cell
+                    System.out.println("Residence Generalization of GeneralizedDataForAnonymization is  " + GeneralizedDataForAnonymization[i][j]);
+
+                } // if (j == 0 || j == 2 )
+                else {
+                    GeneralizedDataForAnonymization[i][j] = result[i][j];
+                }
+            }
+
+        }
+
+        //return result; 
+        System.out.println("length of buffer for tcloseness   " + query_result.length);
+        totalNumberOfRecords = query_result.length;
+        prepareForTCloseness(dbManager, query_result.length);
+
+    }
 
     public static String[][] t_closeness(int kAnon, float tvalue) {
         for (int i = 0; i < 9; i++) {
 
         }
         return null;
-    }
-
-    public static void setTclosenessEquivalenceClass() {
-        // get a DBManager
-        DBManager dbManager = new DBManager();
-
-        // create sql to get all Ids
-        String sql = "SELECT " + sensitive_attribute + " " + quasi_attribute
-                + "FROM Crime";
-        String[] query_result = dbManager.runQuery(sql);
-        System.out.println("tcloseness query_result  " + query_result.length);
-        totalNumberOfRecords = query_result.length;
-        prepareForTCloseness(dbManager, query_result.length);
     }
 
     // select crime_type, anonymized_residence as anon_res, count(anonymized_residence), count(anonymized_residence)/(select count(anonymized_residence) from Phase3.EquivalenceClassTable where anonymized_residence = anon_res group by anonymized_residence) as EqClass_saDist from Phase3.EquivalenceClassTable group by crime_type, anonymized_residence;
@@ -62,7 +110,6 @@ public class TCloseness {
         // get a DBManager
         DBManager dbManager = new DBManager();
 
-        tClosenessStartTime = System.currentTimeMillis();
         try {
 
             String sql = "SELECT ANONYMIZED_RESIDENCE FROM EquivalenceClassTable";
@@ -139,11 +186,11 @@ public class TCloseness {
             }
         }
 
-        confirmTCloseness(sensAttrForBuffer, sesAttrDistForEqClass, tValue);
+        confirmTCloseness(sensAttrForBuffer, sesAttrDistForEqClass);
 
     }
 
-    private static void confirmTCloseness(String[][] sensAttrDistForBuffer, String[][] sensAttrDistForEqClass, double t) {
+    private static void confirmTCloseness(String[][] sensAttrDistForBuffer, String[][] sensAttrDistForEqClass) {
         satisfiedTCloseness = 0;
         notSatisfiedTCloseness = 0;
         countCheckForTCloseness = 0;
@@ -160,7 +207,7 @@ public class TCloseness {
                     String bufferCrimeType = sensAttrDistForBuffer[m][0];
                     double bufferProb = Double.parseDouble(sensAttrDistForBuffer[m][2]);
                     if (eqClassCrimeType.equals(bufferCrimeType)) {
-                        countCheckForTCloseness+=1;
+                        countCheckForTCloseness += 1;
                         double absoluteProb = Math.abs(bufferProb - eqClassProb);
                         if (absoluteProb < tValue) {
                             System.out.println("T closesness sat for " + eqClassCrimeType);
@@ -174,61 +221,60 @@ public class TCloseness {
                 }
             }
         }
-          
-        
-        tClosenessEndTime = System.currentTimeMillis();
-        tClosenessTime = tClosenessEndTime - tClosenessStartTime;
-        //call info_loss with lDivData
-        InfoLoss infoLoss = new InfoLoss();
-        infoLoss.infoLossForTCloseness(dataToObtainInfoLoss);
-        int j = 0;
-        try {
-            Workbook workbook = Workbook.getWorkbook(new File("/home/asakpere/Desktop/tcloseness_basic.xls"));
-            WritableWorkbook copy = Workbook.createWorkbook(new File("/home/asakpere/Desktop/tcloseness_basic.xls"), workbook);
-            WritableSheet sheet = copy.getSheet(0);
 
-            jxl.write.Number rround = new jxl.write.Number(j, Phase3GUI.round, Phase3GUI.round);
-            sheet.addCell(rround);
-            j++;
-            jxl.write.Number totalNoOfRec = new jxl.write.Number(j, Phase3GUI.round, totalNumberOfRecords);
-            sheet.addCell(totalNoOfRec);
-            j++;
-            jxl.write.Number suppRec = new jxl.write.Number(j, Phase3GUI.round, countOfRecNotGoingTCloseness);
-            sheet.addCell(suppRec);
-            j++;
-             jxl.write.Number checkCloseness = new jxl.write.Number(j, Phase3GUI.round, countCheckForTCloseness);
-            sheet.addCell(checkCloseness);
-            j++;
-            jxl.write.Number satTCloseness = new jxl.write.Number(j, Phase3GUI.round, satisfiedTCloseness);
-            sheet.addCell(satTCloseness);
-            j++;
-            jxl.write.Number notSatTCloseness = new jxl.write.Number(j, Phase3GUI.round, notSatisfiedTCloseness);
-            sheet.addCell(notSatTCloseness);
-            j++;
+        double percentNotSat = (double) (notSatisfiedTCloseness / countCheckForTCloseness);
 
-            jxl.write.Number tCloseTime = new jxl.write.Number(j, Phase3GUI.round, tClosenessTime);
-            sheet.addCell(tCloseTime);
-            j++;
-            jxl.write.Number tCloseInfoLoss = new jxl.write.Number(j, Phase3GUI.round, InfoLoss.roundloss);
-            sheet.addCell(tCloseInfoLoss);
-            j++;
-            jxl.write.Number bufferLife = new jxl.write.Number(j, Phase3GUI.round, Phase3GUI.existence_time);
-            sheet.addCell(bufferLife);
-            copy.write();
-            copy.close();
+        if (percentNotSat >= TCloseness.alphaValue) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-          double percentNotSat = (double)(notSatisfiedTCloseness/countCheckForTCloseness);
-                
-            if(percentNotSat >= alphaValue){
-                
-                TClosenessAdvanced.AnonymizedInfo(++GenStep,0);
-                    
+            TClosenessAdvanced.AnonymizedInfo(++TCloseness.GenStep, 1);
+
+        } else {
+
+            tClosenessAdvEndTime = System.currentTimeMillis();
+            tClosenessTime = tClosenessAdvEndTime - tClosenessAdvStartTime;
+            //call info_loss with lDivData
+            InfoLoss infoLoss = new InfoLoss();
+            infoLoss.infoLossForTCloseness(dataToObtainInfoLoss);
+            int j = 0;
+            try {
+                Workbook workbook = Workbook.getWorkbook(new File("/home/asakpere/Desktop/tcloseness_advanced.xls"));
+                WritableWorkbook copy = Workbook.createWorkbook(new File("/home/asakpere/Desktop/tcloseness_advanced.xls"), workbook);
+                WritableSheet sheet = copy.getSheet(0);
+
+                jxl.write.Number rround = new jxl.write.Number(j, Phase3GUI.round, Phase3GUI.round);
+                sheet.addCell(rround);
+                j++;
+                jxl.write.Number totalNoOfRec = new jxl.write.Number(j, Phase3GUI.round, totalNumberOfRecords);
+                sheet.addCell(totalNoOfRec);
+                j++;
+                jxl.write.Number suppRec = new jxl.write.Number(j, Phase3GUI.round, countOfRecNotGoingTCloseness);
+                sheet.addCell(suppRec);
+                j++;
+                jxl.write.Number checkCloseness = new jxl.write.Number(j, Phase3GUI.round, countCheckForTCloseness);
+                sheet.addCell(checkCloseness);
+                j++;
+                jxl.write.Number satTCloseness = new jxl.write.Number(j, Phase3GUI.round, satisfiedTCloseness);
+                sheet.addCell(satTCloseness);
+                j++;
+                jxl.write.Number notSatTCloseness = new jxl.write.Number(j, Phase3GUI.round, notSatisfiedTCloseness);
+                sheet.addCell(notSatTCloseness);
+                j++;
+
+                jxl.write.Number tCloseTime = new jxl.write.Number(j, Phase3GUI.round, tClosenessTime);
+                sheet.addCell(tCloseTime);
+                j++;
+                jxl.write.Number tCloseInfoLoss = new jxl.write.Number(j, Phase3GUI.round, InfoLoss.roundloss);
+                sheet.addCell(tCloseInfoLoss);
+                j++;
+                jxl.write.Number bufferLife = new jxl.write.Number(j, Phase3GUI.round, Phase3GUI.existence_time);
+                sheet.addCell(bufferLife);
+                copy.write();
+                copy.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
+        }
     }
 
 }

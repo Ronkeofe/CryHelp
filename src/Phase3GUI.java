@@ -160,7 +160,7 @@ public class Phase3GUI extends JFrame {
 
     public void newScenarioPrompt() throws WriteException {
 
-        start_time = System.currentTimeMillis();
+        start_time = System.currentTimeMillis(); // this might not be needed
 
         //measure to check if no record lives here more than 5000..does not make any sense
         expired_row = dbMngr.runQuery(String.format("SELECT ArrivalTime FROM Crime WHERE (%s) - ArrivalTime  > (%s) ", System.currentTimeMillis(), 5000));
@@ -204,15 +204,17 @@ public class Phase3GUI extends JFrame {
          but samarati still gives us a bullshit of two dim array
          */
         data = Samarati.kanon(kanon, maxSup, ids);  //check later
-        //System.out.println(data.toString());
+        long endTime = System.currentTimeMillis();
+        anon_time = (endTime - startTime);
+        System.out.println("anon_time is  " + anon_time);
 
-        for (int i = 0; i < data.length; i++) {
+      /*  for (int i = 0; i < data.length; i++) {
 
             for (int j = 0; j < data[i].length; j++) {
 
                 System.out.println("Data at " + i + ", " + j + " is " + data[i][j]);
             }
-        }
+        }  */
 
         
         anonymised_length = data.length;
@@ -220,13 +222,14 @@ public class Phase3GUI extends JFrame {
         //  String[] maxarrivaltime = dbMngr.runQuery( "SELECT " + "max(ArrivalTime)" + " FROM Student" );
         setTableData(data, ids);
        
-        long endTime = System.currentTimeMillis();
+       // long endTime = System.currentTimeMillis(); // move to immediately after call to function kanon
       
         //time taken to anonymised and calc info loss for each of the generalised tuple in the buffer
-        anon_time = (endTime - start_time);
+        anon_time = (endTime - startTime);
+        //anon_time = (endTime - start_time);  // not needed
         
-        //whatever this means doesnt make a brain for now
-        totalTime = (endTime - startTime);
+        //whatever this means doesnt make a brain for now. this is for poisson
+        totalTime = (endTime - startTime);  
 
          LDiversity.AnonymizedInfo();
          LDiversity.populateDatabase_EquivalenceClass();
@@ -691,7 +694,7 @@ public class Phase3GUI extends JFrame {
             Generalizer.infoloss.removeAllElements();
             window.actionPerformed();
         }
-        row_position_in_file = 1;
+        row_position_in_file = 1;  // why initialize to 1
         System.out.println("\n\n\n\n");
         //}
 //        try {

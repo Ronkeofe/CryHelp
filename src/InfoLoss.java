@@ -290,6 +290,273 @@ public class InfoLoss {
 
 
     }
+      public void infoLossForTCloseness(String[][] datas) {
+        
+        //an array to take the info loss for each generalisation
+        double infoloss[] = new double[datas.length];
+        //this is taking the entire round information loss
+        roundloss_accumulator = 0.0;
+         int totalRows=0;
+        for (int i = 0; i < datas.length; i++) {
+             if(datas[i][0] != null){
+             double infoloss_accumulator = 0.0;
+            int countOfAnonymized = Integer.parseInt(datas[i][1]);
+            totalRows+=countOfAnonymized;
+            for (int j = 0; j < 1; j++) {   
+                if ("Baxter Hall".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_baxter / total_address;
+
+                } else if ("Clarinus Village".equals(datas[i][j])) {
+                    infoloss[i] = total_room_clarinus / total_address;
+                } else if ("College House".equals(datas[i][j])) {
+                    infoloss[i] = total_room_college_house / total_address;
+                } else if ("Fuller Hall".equals(datas[i][j])) {
+                    infoloss[i] = total_room_FullerHall / total_address;
+
+                } else if ("Graca Machel Hall".equals(datas[i][j])) {
+                    infoloss[i] = total_room_GracaMachel / total_address;
+
+                } else if ("Glendower".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Glendower / total_address;
+
+                } else if ("Kilindini".equals(datas[i][j])) {
+                    infoloss[i] = total_room_kilindini / total_address;
+                } else if ("Kopano".equals(datas[i][j])) {
+                    infoloss[i] = total_room_kopano / total_address;
+                } else if ("Leo Marquard Hall".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_leoMarquard / total_address;
+
+                } else if ("Rochester House".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_Rochester / total_address;
+
+                } else if ("Smuts Hall".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_Smuts / total_address;
+
+                } else if ("Tugwell Hall".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_Tugwell / total_address;
+
+                } else if ("University House".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_UniversityHouse / total_address;
+
+                } else if ("The University House Cottages".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_UnivHouseCottages / total_address;
+
+                } else if ("Varietas".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Varietas / total_address;
+
+                } else if ("Groote Schuur Residence".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_GrooteSchuur / total_address;
+
+                } else if ("Medical Residence".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_MedicalRes / total_address;
+
+                } else if (("A Forest Hill".equals(datas[i][j])) || ("B Forest Hill".equals(datas[i][j]))
+                        || ("C Forest Hill".equals(datas[i][j])) || ("D Forest Hill".equals(datas[i][j]))
+                        || ("E Forest Hill".equals(datas[i][j])) || ("Forest Hill A-E").equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_ForestHillA_E / total_address;
+
+                } else if ("Groote Schuur Mansions".equals(datas[i][j])) {
+
+                    infoloss[i] = total_GrooteSchuurMansions / total_address;
+
+                } else if ("Liesbeeck Gardens".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_Liesbeek / total_address;
+
+                } else if ("Obz Square".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_Obz / total_address;
+
+                } else if ("Rondeberg".equals(datas[i][j])) {
+
+                    infoloss[i] = total_Rondeberg / total_address;
+
+                } else if ("T.B. Davie Court".equals(datas[i][j])) {
+
+                    infoloss[i] = total_room_TBDavies / total_address;
+
+                } else if ("Block F Forest Hill".equals(datas[i][j])) {
+                    infoloss[i] = total_room_ForestHillF / total_address;
+                } else if ("J.P. Duminy Court".equals(datas[i][j])) {
+                    infoloss[i] = total_room_JP / total_address;
+                } else if ("The Woolsack".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Woolsack / total_address;
+                } else if ("The Inglewood".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Inglewood / total_address;
+                } else if ("The Avenue Road".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Avenue / total_address;
+                } else if ("The Woodbine".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Woodbine / total_address;
+                } else if ("Linkoping".equals(datas[i][j])) {
+                    infoloss[i] = total_room_Linkoping / total_address;
+                } else if ("North Grange".equals(datas[i][j])) {
+                    infoloss[i] = total_room_NorthGrange / total_address;
+                } else if ("Alma Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_alma / total_address;
+
+                } else if ("Smith Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_smith / total_address;
+                } else if ("Pillans Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_pillans / total_address;
+
+                } else if ("Sawkins Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_sawkins / total_address;
+
+                } else if ("Liesbeek Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_liesbeekrd / total_address;
+
+                } else if ("Banksia Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_banksia / total_address;
+
+                } else if ("Langton Road Rosebank".equals(datas[i][j])) {
+                    infoloss[i] = total_langton / total_address;
+
+                } else if ("Durban Road Mowbray".equals(datas[i][j])) {
+                    infoloss[i] = total_durban / total_address;
+
+                } else if ("Clandoenian Court Mowbray".equals(datas[i][j])) {
+                    infoloss[i] = total_clandoenian / total_address;
+
+                } else if ("Bridge Street Mowbray".equals(datas[i][j])) {
+                    infoloss[i] = total_bridge / total_address;
+
+                } else if ("Klipfontein Road Mowbray".equals(datas[i][j])) {
+                    infoloss[i] = total_klipfontein / total_address;
+
+                } else if ("Osborne Road Mowbray".equals(datas[i][j])) {
+                    infoloss[i] = total_osborne / total_address;
+
+                } else if ("Bath Road Claremont".equals(datas[i][j])) {
+                    infoloss[i] = total_bath / total_address;
+
+                } else if ("Protea Road Claremont".equals(datas[i][j])) {
+                    infoloss[i] = total_protea / total_address;
+
+                } else if ("Main Road Claremont".equals(datas[i][j])) {
+                    infoloss[i] = total_clmainroad / total_address;
+
+                } else if ("Palmyra Road Claremont".equals(datas[i][j])) {
+                    infoloss[i] = total_palmyra / total_address;
+
+                } else if ("Main Road Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_romain / total_address;
+
+                } else if ("Ednam Road Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_ednam / total_address;
+
+                } else if ("Miner Road Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_miner / total_address;
+
+                } else if ("Belmont Road Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_belmont / total_address;
+
+                } else if ("Klipper Road Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_klipper / total_address;
+
+                } else if ("Baxter Avenue Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_baxterAvenue / total_address;
+
+                } else if ("Broadway Avenue Rondebosch".equals(datas[i][j])) {
+                    infoloss[i] = total_broadway / total_address;
+
+                } else if ("King Street Newsland".equals(datas[i][j])) {
+                    infoloss[i] = total_kingstreet / total_address;
+                } else if ("Oak Avenue Newsland".equals(datas[i][j])) {
+                    infoloss[i] = total_oakavenue / total_address;
+
+                } else if ("Palmboom Road Newsland".equals(datas[i][j])) {
+                    infoloss[i] = total_palmboom / total_address;
+
+                } else if ("Newsland Road Newsland".equals(datas[i][j])) {
+                    infoloss[i] = total_newslandrd / total_address;
+
+                } else if ("1st Tier Accomodation".equals(datas[i][j])) {
+                    infoloss[i] = total_1st_tier / total_address;
+
+                } else if ("2nd Tier Accomodation".equals(datas[i][j])) {
+                    infoloss[i] = total_2nd_tier / total_address;
+
+                } else if ("Senior Catering 2nd Tier Accomodation".equals(datas[i][j])) {
+                    infoloss[i] = total_2ndSenior_tier / total_address;
+
+                } else if ("Self Catering 2nd Tier Accomodation".equals(datas[i][j])) {
+                    infoloss[i] = total_2ndSelf_tier / total_address;
+
+                } else if ("3rd Tier Accomodation".equals(datas[i][j])) {
+                    infoloss[i] = total_3rd_tier / total_address;
+
+                } else if ("Off-Campus Accomodation (Rosebank)".equals(datas[i][j])) {
+                    infoloss[i] = total_rosebank / total_address;
+
+                } else if ("Off-Campus Accomodation (Mowbray)".equals(datas[i][j])) {
+                    infoloss[i] = total_mowbray / total_address;
+
+                } else if ("Off-Campus Accomodation (Claremont)".equals(datas[i][j])) {
+                    infoloss[i] = total_claremont / total_address;
+
+                } else if ("Off-Campus Accomodation (Rondebosch)".equals(datas[i][j])) {
+                    infoloss[i] = total_rondebosch / total_address;
+
+                } else if ("Off-Campus Accomodation (Newsland)".equals(datas[i][j])) {
+                    infoloss[i] = total_newsland / total_address;
+
+                } else if ("UCT RESIDENCE".equals(datas[i][j])) {
+                    infoloss[i] = total_uct_residence / total_address;
+
+                } else if ("Off-Campus Accomodation (Southern Suburbs)".equals(datas[i][j])) {
+                    infoloss[i] = total_south_surburb / total_address;
+
+                } else if ("Cape Town".equals(datas[i][j])) {
+                    infoloss[i] = total_address / total_address;
+
+                } else if ("Cape Town".equals(datas[i][j])) {
+                    infoloss[i] = total_address / total_address;
+
+                } else {
+                    if (Phase3GUI.GenStep == 0) {
+                        infoloss[i] = 0;
+                    }
+
+                }
+                infoloss[i] = infoloss[i] * countOfAnonymized;
+                
+                System.out.println("T Closeness Information loss of [" + i + "] is " + infoloss[i]);
+                infoloss_accumulator = infoloss_accumulator + infoloss[i];
+
+            }
+
+            roundloss_accumulator = roundloss_accumulator + infoloss_accumulator;
+        }
+        }
+        //getting the eventual information loss in this round
+        roundloss = roundloss_accumulator / totalRows;
+         System.out.println("Total Information loss for T Closeness of Round [" + Phase3GUI.round + "] is " + roundloss_accumulator);
+        System.out.println("Average Information loss for T Closeness of Round [" + Phase3GUI.round + "] is " + roundloss);
+        
+        //from here downwards, not doing anything, i mean they are useless: really?
+        for (int b = 0; b < RESIDENCE.length; b++) {
+
+            dbRESIDENCE[b] = RESIDENCE[b];
+
+        }
+        Integer[] InfoLoss = new Integer[Generalizer.infoloss.size()];
+
+        Integer[] rInfoLoss = Generalizer.infoloss.toArray(InfoLoss);
+
+        int size = Generalizer.infoloss.size();
+
+
+    }
      public void infoLossForLDiv(String[][] datas) {
         
         //an array to take the info loss for each generalisation
@@ -298,6 +565,7 @@ public class InfoLoss {
         roundloss_accumulator = 0.0;
          int totalRows=0;
         for (int i = 0; i < datas.length; i++) {
+             if(datas[i][0] != null){
              double infoloss_accumulator = 0.0;
             int countOfAnonymized = Integer.parseInt(datas[i][1]);
             totalRows+=countOfAnonymized;
@@ -535,7 +803,8 @@ public class InfoLoss {
             }
 
             roundloss_accumulator = roundloss_accumulator + infoloss_accumulator;
-        } 
+        }
+        }
         //getting the eventual information loss in this round
         roundloss = roundloss_accumulator / totalRows;
          System.out.println("Total Information loss for ldiv of Round [" + Phase3GUI.round + "] is " + roundloss_accumulator);
